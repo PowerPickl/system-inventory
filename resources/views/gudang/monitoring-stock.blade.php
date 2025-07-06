@@ -34,6 +34,7 @@
             </div>
 
             <!-- Navigation -->
+            <!-- Navigation -->
             <nav class="mt-6 pb-20">
                 <div class="px-3">
                     <!-- Dashboard -->
@@ -51,6 +52,16 @@
                         </svg>
                         Monitoring Stock
                         <span class="ml-auto bg-yellow-500 text-white text-xs px-2 py-1 rounded-full">EOQ</span>
+                    </a>
+
+                    <!-- Request Restock -->
+                    <a href="{{ route('gudang.restock-requests') }}" class="flex items-center px-3 py-2 text-emerald-300 hover:text-white hover:bg-emerald-700 rounded-lg transition-colors duration-200 mb-1">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                        </svg>
+                        Request Restock
+                        {{-- You can add pending count here later --}}
+                        {{-- <span class="ml-auto bg-orange-500 text-white text-xs px-2 py-1 rounded-full">2</span> --}}
                     </a>
 
                     <!-- Other menu items -->
@@ -367,6 +378,8 @@
 
     <!-- Replace the existing <script> section with this enhanced version -->
 <script>
+// Enhanced JavaScript for Monitoring Stock with Restock Request Functionality
+
 let autoRefreshInterval = null;
 let isAutoRefreshEnabled = false;
 
@@ -398,7 +411,7 @@ document.getElementById('autoRefresh').addEventListener('change', function() {
         toggle.classList.add('bg-gray-600');
         dot.style.transform = 'translateX(0px)';
     }
-    });
+});
 
 // Start auto refresh
 function startAutoRefresh() {
@@ -407,7 +420,7 @@ function startAutoRefresh() {
     autoRefreshInterval = setInterval(() => {
         updateRealTimeData();
     }, 30000); // 30 seconds
-    }
+}
 
 // Stop auto refresh
 function stopAutoRefresh() {
@@ -415,7 +428,7 @@ function stopAutoRefresh() {
         clearInterval(autoRefreshInterval);
         autoRefreshInterval = null;
     }
-    }
+}
 
 // Update all EOQ calculations
 function updateAllEOQ() {
@@ -427,27 +440,26 @@ function updateAllEOQ() {
             'X-CSRF-TOKEN': csrfToken,
             'Content-Type': 'application/json'
         }
-        })
+    })
     .then(response => response.json())
     .then(data => {
         hideLoadingSpinner();
         
         if (data.success) {
             showNotification(data.message, 'success');
-            // Refresh data after 3 seconds to allow job completion
             setTimeout(() => {
                 updateRealTimeData();
             }, 3000);
         } else {
             showNotification('Error: ' + data.message, 'error');
         }
-        })
+    })
     .catch(error => {
         hideLoadingSpinner();
         console.error('Error:', error);
         showNotification('Network error while updating EOQ', 'error');
-        });
-        }
+    });
+}
 
 // Update single item EOQ
 function updateSingleEOQ(itemId) {
@@ -466,7 +478,6 @@ function updateSingleEOQ(itemId) {
         
         if (data.success) {
             showNotification(data.message, 'success');
-            // Refresh data after 2 seconds
             setTimeout(() => {
                 updateRealTimeData();
             }, 2000);
@@ -479,7 +490,7 @@ function updateSingleEOQ(itemId) {
         console.error('Error:', error);
         showNotification('Network error while updating EOQ', 'error');
     });
-    }
+}
 
 // Get real-time data updates
 function updateRealTimeData() {
@@ -569,7 +580,6 @@ function showEOQDetails(itemId) {
         hideLoadingSpinner();
         
         if (data.success) {
-            // Pass itemId to modal
             data.item_id = itemId;
             displayEOQModal(data);
         } else {
@@ -589,94 +599,51 @@ function displayEOQModal(data) {
     modal.className = 'fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50';
     modal.innerHTML = `
         <div class="fixed inset-0 flex items-center justify-center z-50">
-        <div class="bg-white rounded-lg shadow-xl border p-4 w-96 max-w-md mx-4">
-            <!-- Header -->
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-semibold text-gray-900">
-                    EOQ Calculation
-                </h3>
-                <button onclick="this.closest('.fixed').remove()" class="text-gray-400 hover:text-gray-600">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                </button>
-            </div>
-            
-            <!-- Item Name -->
-            <div class="mb-4 p-2 bg-gray-50 rounded">
-                <p class="text-sm font-medium text-gray-700">${data.item.name}</p>
-                <p class="text-xs text-gray-500">${data.item.code || ''}</p>
-            </div>
-            
-            <!-- Main Results (Always Visible) -->
-            <div class="space-y-3 mb-4">
-                <div class="flex justify-between items-center bg-blue-50 px-4 py-3 rounded-lg">
-                    <span class="font-medium text-gray-700">EOQ (Economic Order Quantity)</span>
-                    <span class="font-bold text-lg text-blue-600">${data.calculations.eoq.eoq}</span>
+            <div class="bg-white rounded-lg shadow-xl border p-4 w-96 max-w-md mx-4">
+                <!-- Header -->
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900">EOQ Calculation</h3>
+                    <button onclick="this.closest('.fixed').remove()" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
                 </div>
-                <div class="flex justify-between items-center bg-green-50 px-4 py-3 rounded-lg">
-                    <span class="font-medium text-gray-700">Safety Stock</span>
-                    <span class="font-bold text-lg text-green-600">${data.calculations.safety_stock.safety_stock}</span>
-                </div>
-                <div class="flex justify-between items-center bg-orange-50 px-4 py-3 rounded-lg">
-                    <span class="font-medium text-gray-700">ROP (Reorder Point)</span>
-                    <span class="font-bold text-lg text-orange-600">${data.calculations.rop.rop}</span>
-                </div>
-            </div>
-            
-            <!-- Expandable Formula Details -->
-            <div class="border-t pt-3">
-                <button onclick="toggleDetails(this)" class="w-full flex items-center justify-between text-left text-sm font-medium text-gray-700 hover:text-gray-900 focus:outline-none">
-                    <span>📊 View Calculation Details</span>
-                    <svg class="w-4 h-4 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                    </svg>
-                </button>
                 
-                <div class="hidden mt-3 space-y-3" id="calculation-details">
-                    <!-- EOQ Formula -->
-                    <div class="bg-blue-50 p-3 rounded">
-                        <h4 class="font-medium text-blue-800 mb-1">EOQ Formula</h4>
-                        <p class="text-sm text-blue-700 font-mono">${data.calculations.eoq.formula}</p>
+                <!-- Item Name -->
+                <div class="mb-4 p-2 bg-gray-50 rounded">
+                    <p class="text-sm font-medium text-gray-700">${data.item.name}</p>
+                    <p class="text-xs text-gray-500">${data.item.code || ''}</p>
+                </div>
+                
+                <!-- Main Results -->
+                <div class="space-y-3 mb-4">
+                    <div class="flex justify-between items-center bg-blue-50 px-4 py-3 rounded-lg">
+                        <span class="font-medium text-gray-700">EOQ</span>
+                        <span class="font-bold text-lg text-blue-600">${data.calculations.eoq.eoq}</span>
                     </div>
-                    
-                    <!-- Safety Stock Formula -->
-                    <div class="bg-green-50 p-3 rounded">
-                        <h4 class="font-medium text-green-800 mb-1">Safety Stock Formula</h4>
-                        <p class="text-sm text-green-700 font-mono">${data.calculations.safety_stock.formula}</p>
+                    <div class="flex justify-between items-center bg-green-50 px-4 py-3 rounded-lg">
+                        <span class="font-medium text-gray-700">Safety Stock</span>
+                        <span class="font-bold text-lg text-green-600">${data.calculations.safety_stock.safety_stock}</span>
                     </div>
-                    
-                    <!-- ROP Formula -->
-                    <div class="bg-orange-50 p-3 rounded">
-                        <h4 class="font-medium text-orange-800 mb-1">ROP Formula</h4>
-                        <p class="text-sm text-orange-700 font-mono">${data.calculations.rop.formula}</p>
-                    </div>
-                    
-                    <!-- Parameters -->
-                    <div class="bg-gray-50 p-3 rounded">
-                        <h4 class="font-medium text-gray-800 mb-2">Parameters</h4>
-                        <div class="grid grid-cols-2 gap-2 text-sm text-gray-600">
-                            <div>D (Annual Demand): <span class="font-medium">${data.parameters.annual_demand}</span></div>
-                            <div>S (Ordering Cost): <span class="font-medium">${data.parameters.ordering_cost}</span></div>
-                            <div>H (Holding Cost): <span class="font-medium">${data.parameters.holding_cost}</span></div>
-                            <div>LT (Lead Time): <span class="font-medium">${data.parameters.lead_time} days</span></div>
-                        </div>
+                    <div class="flex justify-between items-center bg-orange-50 px-4 py-3 rounded-lg">
+                        <span class="font-medium text-gray-700">ROP</span>
+                        <span class="font-bold text-lg text-orange-600">${data.calculations.rop.rop}</span>
                     </div>
                 </div>
-            </div>
-            
-            <!-- Action Buttons -->
-            <div class="mt-4 flex justify-end space-x-3">
-                <button onclick="updateSingleEOQ(${data.item_id || 'null'})" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium">
-                    🔄 Update EOQ
-                </button>
-                <button onclick="this.closest('.fixed').remove()" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 text-sm font-medium">
-                    Close
-                </button>
+                
+                <!-- Action Buttons -->
+                <div class="mt-4 flex justify-end space-x-3">
+                    <button onclick="updateSingleEOQ(${data.item_id || 'null'})" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium">
+                        🔄 Update EOQ
+                    </button>
+                    <button onclick="this.closest('.fixed').remove()" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 text-sm font-medium">
+                        Close
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
-`;
+    `;
     
     document.body.appendChild(modal);
     
@@ -688,31 +655,422 @@ function displayEOQModal(data) {
     });
 }
 
-function toggleDetails(button) {
-    const details = document.getElementById('calculation-details');
-    const arrow = button.querySelector('svg');
+// ===========================================
+// RESTOCK REQUEST FUNCTIONALITY - NEW!
+// ===========================================
+
+// Create bulk restock request
+function createBulkRestockRequest() {
+    const selectedItems = Array.from(document.querySelectorAll('.restock-checkbox:checked')).map(cb => cb.value);
     
-    details.classList.toggle('hidden');
-    
-    if (details.classList.contains('hidden')) {
-        arrow.style.transform = 'rotate(0deg)';
-        button.querySelector('span').textContent = '📊 View Calculation Details';
-    } else {
-        arrow.style.transform = 'rotate(180deg)';
-        button.querySelector('span').textContent = '📊 Hide Calculation Details';
+    if (selectedItems.length === 0) {
+        showNotification('Please select items for restock request', 'warning');
+        return;
     }
+    
+    // Show loading while getting recommendations
+    showLoadingSpinner('Loading restock recommendations...');
+    
+    // Get recommendations for selected items
+    fetch('/gudang/monitoring-stock/restock-recommendations', {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': csrfToken,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            item_ids: selectedItems
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        hideLoadingSpinner();
+        
+        if (data.success) {
+            showRestockRequestModal(data.items, data.total_estimasi);
+        } else {
+            showNotification('Error loading recommendations: ' + data.message, 'error');
+        }
+    })
+    .catch(error => {
+        hideLoadingSpinner();
+        console.error('Error:', error);
+        showNotification('Network error while loading recommendations', 'error');
+    });
+}
+
+// Show restock request modal
+function showRestockRequestModal(items, totalEstimasi) {
+    const modal = document.createElement('div');
+    modal.className = 'fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50';
+    modal.innerHTML = `
+        <div class="fixed inset-0 flex items-center justify-center z-50 p-4">
+            <div class="bg-white rounded-lg shadow-xl border max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+                <!-- Header -->
+                <div class="flex items-center justify-between p-6 border-b border-gray-200 bg-gray-50">
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-900">🚀 Create Restock Request</h3>
+                        <p class="text-sm text-gray-600 mt-1">Review and adjust quantities based on EOQ calculations</p>
+                    </div>
+                    <button onclick="this.closest('.fixed').remove()" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                <!-- Content -->
+                <div class="flex-1 overflow-y-auto p-6">
+                    <form id="restockRequestForm">
+                        <!-- Items List -->
+                        <div class="space-y-4 mb-6">
+                            <h4 class="font-medium text-gray-900 mb-3">📦 Items to Restock (${items.length} items)</h4>
+                            
+                            <div class="space-y-3" id="restockItemsList">
+                                ${items.map((item, index) => `
+                                    <div class="border border-gray-200 rounded-lg p-4 bg-gray-50 hover:bg-gray-100 transition-colors">
+                                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+                                            <!-- Item Info -->
+                                            <div class="md:col-span-1">
+                                                <h5 class="font-medium text-gray-900">${item.nama_barang}</h5>
+                                                <p class="text-sm text-gray-600">${item.kode_barang}</p>
+                                                <p class="text-xs text-gray-500">Current: ${item.current_stock} ${item.satuan}</p>
+                                                <span class="inline-block px-2 py-1 text-xs font-medium rounded-full mt-1 ${getUrgencyBadgeColor(item.urgency)}">
+                                                    ${item.urgency}
+                                                </span>
+                                            </div>
+                                            
+                                            <!-- Quantity Input -->
+                                            <div class="md:col-span-1">
+                                                <label class="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
+                                                <input 
+                                                    type="number" 
+                                                    name="items[${index}][qty_request]" 
+                                                    value="${item.recommended_qty}"
+                                                    min="1"
+                                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                                                    onchange="updateItemTotal(${index}, ${item.harga_beli})"
+                                                >
+                                                <p class="text-xs text-blue-600 mt-1">💡 EOQ: ${item.eoq}</p>
+                                                <input type="hidden" name="items[${index}][id_barang]" value="${item.id_barang}">
+                                            </div>
+                                            
+                                            <!-- Price Info -->
+                                            <div class="md:col-span-1">
+                                                <label class="block text-sm font-medium text-gray-700 mb-1">Unit Price</label>
+                                                <p class="text-sm text-gray-900">Rp ${formatCurrency(item.harga_beli)}</p>
+                                                <p class="text-xs text-gray-600 mt-1">
+                                                    Total: <span class="font-medium item-total-${index}">Rp ${formatCurrency(item.estimasi_total)}</span>
+                                                </p>
+                                            </div>
+                                            
+                                            <!-- Reason -->
+                                            <div class="md:col-span-1">
+                                                <label class="block text-sm font-medium text-gray-700 mb-1">Reason</label>
+                                                <textarea 
+                                                    name="items[${index}][alasan_request]" 
+                                                    rows="2"
+                                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"
+                                                    placeholder="Enter reason for restock..."
+                                                >${item.alasan_default}</textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                        
+                        <!-- Notes -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">📝 Additional Notes</label>
+                            <textarea 
+                                name="catatan_request" 
+                                rows="3"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                                placeholder="Enter any additional notes for this restock request..."
+                            ></textarea>
+                        </div>
+                        
+                        <!-- Summary -->
+                        <div class="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <h4 class="font-medium text-emerald-900">📊 Request Summary</h4>
+                                    <p class="text-sm text-emerald-700">Total Items: ${items.length}</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-sm text-emerald-700">Estimated Total Cost</p>
+                                    <p class="text-xl font-bold text-emerald-900" id="totalEstimatedCost">Rp ${formatCurrency(totalEstimasi)}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Footer -->
+                <div class="p-6 border-t border-gray-200 bg-gray-50 flex justify-end space-x-3">
+                    <button 
+                        type="button" 
+                        onclick="this.closest('.fixed').remove()" 
+                        class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors duration-200 font-medium"
+                    >
+                        Cancel
+                    </button>
+                    <button 
+                        type="button" 
+                        onclick="submitRestockRequest()" 
+                        class="px-6 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors duration-200 font-medium"
+                    >
+                        🚀 Create Request
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Close on outside click
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            modal.remove();
+        }
+    });
+}
+
+// Submit restock request
+function submitRestockRequest() {
+    const form = document.getElementById('restockRequestForm');
+    const formData = new FormData(form);
+    
+    // Convert FormData to JSON structure
+    const requestData = {
+        items: [],
+        catatan_request: formData.get('catatan_request')
+    };
+    
+    // Parse items data
+    const itemsData = {};
+    for (let [key, value] of formData.entries()) {
+        if (key.startsWith('items[')) {
+            const match = key.match(/items\[(\d+)\]\[(.+)\]/);
+            if (match) {
+                const index = match[1];
+                const field = match[2];
+                
+                if (!itemsData[index]) itemsData[index] = {};
+                itemsData[index][field] = value;
+            }
+        }
+    }
+    
+    // Convert to array
+    requestData.items = Object.values(itemsData);
+    
+    // Show loading
+    showLoadingSpinner('Creating restock request...');
+    
+    // Submit request
+    fetch('/gudang/monitoring-stock/create-restock-request', {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': csrfToken,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        hideLoadingSpinner();
+        
+        if (data.success) {
+            // Close modal
+            document.querySelector('.fixed.inset-0').remove();
+            
+            // Show success notification
+            showSuccessModal(
+                '🎉 Request Created Successfully!',
+                `Restock request ${data.request_number} has been created with ${data.total_items} items and sent to Owner for approval.`,
+                [
+                    {
+                        text: '📋 View Request',
+                        class: 'bg-emerald-600 text-white hover:bg-emerald-700',
+                        onclick: `window.location.href='/gudang/restock-requests'`
+                    }
+                ]
+            );
+            
+            // Clear selections
+            document.querySelectorAll('.restock-checkbox:checked').forEach(cb => cb.checked = false);
+            
+        } else {
+            showNotification('Error creating request: ' + data.message, 'error');
+        }
+    })
+    .catch(error => {
+        hideLoadingSpinner();
+        console.error('Error:', error);
+        showNotification('Network error while creating request', 'error');
+    });
 }
 
 // Quick restock for single item
-function quickRestock(itemId, qty) {
-    showNotification(`Quick restock: Creating request for ${qty} units (Feature in development)`, 'info');
-    // This will be implemented when we build the restock request feature
+function quickRestock(itemId, recommendedQty) {
+    const modal = document.createElement('div');
+    modal.className = 'fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50';
+    modal.innerHTML = `
+        <div class="fixed inset-0 flex items-center justify-center z-50 p-4">
+            <div class="bg-white rounded-lg shadow-xl border max-w-md w-full">
+                <!-- Header -->
+                <div class="p-6 border-b border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-900">⚡ Quick Restock</h3>
+                    <p class="text-sm text-gray-600 mt-1">Create instant restock request</p>
+                </div>
+                
+                <!-- Content -->
+                <div class="p-6">
+                    <form id="quickRestockForm">
+                        <input type="hidden" name="id_barang" value="${itemId}">
+                        
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Quantity</label>
+                            <input 
+                                type="number" 
+                                name="qty_request" 
+                                value="${recommendedQty}"
+                                min="1"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                                required
+                            >
+                            <p class="text-xs text-blue-600 mt-1">💡 Recommended: ${recommendedQty} units</p>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Reason</label>
+                            <textarea 
+                                name="alasan_request" 
+                                rows="3"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                                placeholder="Enter reason for quick restock..."
+                            >Urgent restock based on EOQ analysis</textarea>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Footer -->
+                <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
+                    <button 
+                        type="button" 
+                        onclick="this.closest('.fixed').remove()" 
+                        class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors duration-200 font-medium"
+                    >
+                        Cancel
+                    </button>
+                    <button 
+                        type="button" 
+                        onclick="submitQuickRestock()" 
+                        class="px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors duration-200 font-medium"
+                    >
+                        ⚡ Quick Restock
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Close on outside click
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            modal.remove();
+        }
+    });
 }
 
-// Show stock trends (placeholder)
-function showStockTrends(itemId) {
-    showNotification('Stock trends feature coming soon!', 'info');
-    // This will be implemented later
+// Submit quick restock
+function submitQuickRestock() {
+    const form = document.getElementById('quickRestockForm');
+    const formData = new FormData(form);
+    
+    const requestData = {
+        id_barang: formData.get('id_barang'),
+        qty_request: parseInt(formData.get('qty_request')),
+        alasan_request: formData.get('alasan_request')
+    };
+    
+    // Show loading
+    showLoadingSpinner('Creating quick restock request...');
+    
+    // Submit request
+    fetch('/gudang/monitoring-stock/quick-restock', {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': csrfToken,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        hideLoadingSpinner();
+        
+        if (data.success) {
+            // Close modal
+            document.querySelector('.fixed.inset-0').remove();
+            
+            // Show success notification
+            showNotification(data.message, 'success');
+            
+        } else {
+            showNotification('Error creating quick restock: ' + data.message, 'error');
+        }
+    })
+    .catch(error => {
+        hideLoadingSpinner();
+        console.error('Error:', error);
+        showNotification('Network error while creating quick restock', 'error');
+    });
+}
+
+// Update item total calculation
+function updateItemTotal(index, unitPrice) {
+    const qtyInput = document.querySelector(`input[name="items[${index}][qty_request]"]`);
+    const totalElement = document.querySelector(`.item-total-${index}`);
+    
+    if (qtyInput && totalElement) {
+        const qty = parseInt(qtyInput.value) || 0;
+        const total = qty * unitPrice;
+        totalElement.textContent = `Rp ${formatCurrency(total)}`;
+        
+        // Update grand total
+        updateGrandTotal();
+    }
+}
+
+// Update grand total
+function updateGrandTotal() {
+    let grandTotal = 0;
+    
+    document.querySelectorAll('[class*="item-total-"]').forEach(element => {
+        const amount = element.textContent.replace(/[Rp\s,.]/g, '');
+        grandTotal += parseInt(amount) || 0;
+    });
+    
+    const grandTotalElement = document.getElementById('totalEstimatedCost');
+    if (grandTotalElement) {
+        grandTotalElement.textContent = `Rp ${formatCurrency(grandTotal)}`;
+    }
+}
+
+// Get urgency badge color
+function getUrgencyBadgeColor(urgency) {
+    switch(urgency) {
+        case 'Critical': return 'bg-red-100 text-red-800';
+        case 'High': return 'bg-orange-100 text-orange-800';
+        case 'Normal': return 'bg-green-100 text-green-800';
+        default: return 'bg-gray-100 text-gray-800';
+    }
 }
 
 // Select all restock items
@@ -725,17 +1083,9 @@ function selectAllRestock() {
     });
 }
 
-// Create bulk restock request
-function createBulkRestockRequest() {
-    const selectedItems = Array.from(document.querySelectorAll('.restock-checkbox:checked')).map(cb => cb.value);
-    
-    if (selectedItems.length === 0) {
-        showNotification('Please select items for restock request', 'warning');
-        return;
-    }
-    
-    showNotification(`Creating bulk restock request for ${selectedItems.length} items (Feature in development)`, 'info');
-    // This will be implemented when we build the restock request feature
+// Show stock trends (placeholder)
+function showStockTrends(itemId) {
+    showNotification('📈 Stock trends feature coming soon!', 'info');
 }
 
 // Utility functions
@@ -778,9 +1128,61 @@ function showNotification(message, type = 'info') {
     }, 4000);
 }
 
+// Enhanced success modal
+function showSuccessModal(title, message, actions = []) {
+    const modal = document.createElement('div');
+    modal.className = 'fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50';
+    modal.innerHTML = `
+        <div class="fixed inset-0 flex items-center justify-center z-50 p-4">
+            <div class="bg-white rounded-lg shadow-xl border max-w-md w-full">
+                <div class="p-6 text-center">
+                    <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
+                        <svg class="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">${title}</h3>
+                    <p class="text-sm text-gray-600 mb-6">${message}</p>
+                    
+                    <div class="flex justify-center space-x-3">
+                        ${actions.map(action => `
+                            <button 
+                                onclick="${action.onclick}"
+                                class="px-4 py-2 ${action.class} rounded-lg font-medium transition-colors duration-200"
+                            >
+                                ${action.text}
+                            </button>
+                        `).join('')}
+                        <button 
+                            onclick="this.closest('.fixed').remove()" 
+                            class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 font-medium"
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Auto-remove after 10 seconds
+    setTimeout(() => {
+        if (modal.parentNode) {
+            modal.remove();
+        }
+    }, 10000);
+}
+
+// Format currency
+function formatCurrency(amount) {
+    return new Intl.NumberFormat('id-ID').format(amount);
+}
+
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Monitoring Stock Dashboard initialized');
+    console.log('🚀 Monitoring Stock Dashboard with Restock Request functionality initialized');
     
     // Set up select all checkbox
     document.getElementById('selectAll').addEventListener('change', function() {
@@ -788,6 +1190,17 @@ document.addEventListener('DOMContentLoaded', function() {
         checkboxes.forEach(checkbox => {
             checkbox.checked = this.checked;
         });
+    });
+    
+    // Update select all based on individual selections
+    document.addEventListener('change', function(e) {
+        if (e.target.classList.contains('restock-checkbox')) {
+            const allCheckboxes = document.querySelectorAll('.restock-checkbox');
+            const checkedCheckboxes = document.querySelectorAll('.restock-checkbox:checked');
+            const selectAllCheckbox = document.getElementById('selectAll');
+            
+            selectAllCheckbox.checked = allCheckboxes.length === checkedCheckboxes.length;
+        }
     });
 });
 </script>
