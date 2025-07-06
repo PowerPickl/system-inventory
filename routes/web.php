@@ -44,6 +44,7 @@ Route::middleware(['auth', RoleMiddleware::class . ':Kasir'])
             ->name('dashboard.kasir');
     });
 
+// ENHANCED GUDANG ROUTES
 Route::middleware(['auth', RoleMiddleware::class . ':Gudang'])
     ->group(function () {
         Route::get('/dashboard-gudang', [GudangController::class, 'index']);
@@ -55,8 +56,16 @@ Route::middleware(['auth', RoleMiddleware::class . ':Gudang'])
         Route::get('/gudang/monitoring-stock/realtime-data', [App\Http\Controllers\Gudang\MonitoringStockController::class, 'getRealTimeData']);
         Route::get('/gudang/monitoring-stock/eoq-details/{id}', [App\Http\Controllers\Gudang\MonitoringStockController::class, 'getEOQDetails']);
         Route::get('/gudang/monitoring-stock/trends/{id}', [App\Http\Controllers\Gudang\MonitoringStockController::class, 'getStockTrends']);
+        
+        // NEW: Restock Request routes
+        Route::post('/gudang/monitoring-stock/restock-recommendations', [App\Http\Controllers\Gudang\MonitoringStockController::class, 'getRestockRecommendations']);
+        Route::post('/gudang/monitoring-stock/create-restock-request', [App\Http\Controllers\Gudang\MonitoringStockController::class, 'createRestockRequest']);
         Route::post('/gudang/monitoring-stock/quick-restock', [App\Http\Controllers\Gudang\MonitoringStockController::class, 'quickRestockRequest']);
-
+        
+        // NEW: Restock Request Management routes
+        Route::get('/gudang/restock-requests', [App\Http\Controllers\Gudang\RestockRequestController::class, 'index'])->name('gudang.restock-requests');
+        Route::get('/gudang/restock-requests/{id}', [App\Http\Controllers\Gudang\RestockRequestController::class, 'show'])->name('gudang.restock-requests.show');
+        Route::post('/gudang/restock-requests/{id}/cancel', [App\Http\Controllers\Gudang\RestockRequestController::class, 'cancel'])->name('gudang.restock-requests.cancel');
     });
 
 require __DIR__.'/auth.php';

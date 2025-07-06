@@ -36,13 +36,32 @@
             <!-- Navigation -->
             <nav class="mt-6">
                 <div class="px-3">
-                    <!-- Dashboard -->
-                    <a href="#" class="flex items-center px-3 py-2 text-emerald-300 hover:text-white hover:bg-emerald-700 rounded-lg transition-colors duration-200 mb-1">
+                    <!-- Dashboard (Active) -->
+                    <a href="/dashboard-gudang" class="flex items-center px-3 py-2 text-white bg-emerald-700 rounded-lg transition-colors duration-200 mb-1">
                         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h2a2 2 0 012 2v10H8V5z"></path>
                         </svg>
                         Dashboard
+                    </a>
+
+                    <!-- Monitoring Stock -->
+                    <a href="{{ route('gudang.monitoring-stock') }}" class="flex items-center px-3 py-2 text-emerald-300 hover:text-white hover:bg-emerald-700 rounded-lg transition-colors duration-200 mb-1">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                        Monitoring Stock
+                        <span class="ml-auto bg-yellow-500 text-white text-xs px-2 py-1 rounded-full">EOQ</span>
+                    </a>
+
+                    <!-- Request Restock -->
+                    <a href="{{ route('gudang.restock-requests') }}" class="flex items-center px-3 py-2 text-emerald-300 hover:text-white hover:bg-emerald-700 rounded-lg transition-colors duration-200 mb-1">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                        </svg>
+                        Request Restock
+                        {{-- You can add pending count here later --}}
+                        {{-- <span class="ml-auto bg-orange-500 text-white text-xs px-2 py-1 rounded-full">2</span> --}}
                     </a>
 
                     <!-- Verifikasi Permintaan Barang -->
@@ -68,23 +87,6 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                         </svg>
                         Barang Masuk
-                    </a>
-
-                    <!-- Monitoring Stock -->
-                    <a href="{{ route('gudang.monitoring-stock') }}" class="flex items-center px-3 py-2 text-emerald-300 hover:text-white hover:bg-emerald-700 rounded-lg transition-colors duration-200 mb-1">
-                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                        </svg>
-                        Monitoring Stock
-                        <span class="ml-auto bg-yellow-500 text-white text-xs px-2 py-1 rounded-full">EOQ</span>
-                    </a>
-
-                    <!-- Request Restock -->
-                    <a href="#" class="flex items-center px-3 py-2 text-emerald-300 hover:text-white hover:bg-emerald-700 rounded-lg transition-colors duration-200 mb-1">
-                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"></path>
-                        </svg>
-                        Request Restock
                     </a>
                 </div>
             </nav>
@@ -125,9 +127,9 @@
                         </div>
                         <div class="flex items-center space-x-4">
                             <!-- Quick Actions -->
-                            <button class="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors duration-200 text-sm font-medium">
-                                + Barang Masuk
-                            </button>
+                            <a href="{{ route('gudang.monitoring-stock') }}" class="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors duration-200 text-sm font-medium">
+                                📊 Monitoring Stock
+                            </a>
                             
                             <!-- Date/Time -->
                             <div class="text-sm text-gray-600">
@@ -188,7 +190,7 @@
                         <div class="flex items-center">
                             <div class="p-2 bg-blue-100 rounded-lg">
                                 <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
                                 </svg>
                             </div>
                             <div class="ml-4">
@@ -218,18 +220,18 @@
                                         <p class="font-medium text-gray-900">Filter Oli Motor</p>
                                         <p class="text-sm text-gray-600">Stock: 5 | Reorder: 10</p>
                                     </div>
-                                    <button class="px-3 py-1 bg-yellow-500 text-white rounded text-sm hover:bg-yellow-600">
+                                    <a href="{{ route('gudang.monitoring-stock') }}" class="px-3 py-1 bg-yellow-500 text-white rounded text-sm hover:bg-yellow-600">
                                         Request
-                                    </button>
+                                    </a>
                                 </div>
                                 <div class="flex items-center justify-between p-3 bg-red-50 rounded-lg">
                                     <div>
                                         <p class="font-medium text-gray-900">Ban Dalam 70/90</p>
                                         <p class="text-sm text-gray-600">Stock: 2 | Reorder: 15</p>
                                     </div>
-                                    <button class="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600">
+                                    <a href="{{ route('gudang.monitoring-stock') }}" class="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600">
                                         Urgent
-                                    </button>
+                                    </a>
                                 </div>
                             </div>
                         </div>
