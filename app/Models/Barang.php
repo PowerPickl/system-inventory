@@ -15,13 +15,29 @@ class Barang extends Model
     protected $fillable = [
         'kode_barang',
         'nama_barang',
-        'satuan',
+        'satuan', 
         'harga_beli',
         'harga_jual',
         'reorder_point',
         'eoq_qty',
         'lead_time',
-        'deskripsi'
+        'deskripsi',
+        // ADD THESE EOQ FIELDS:
+        'annual_demand',
+        'ordering_cost', 
+        'holding_cost',
+        'demand_avg_daily',
+        'demand_max_daily',
+        'eoq_calculated',
+        'rop_calculated',
+        'safety_stock',
+        'last_eoq_calculation',
+        'id_kategori',
+        
+        'sequence_number',
+        'merk',
+        'model_tipe',
+        'keterangan_detail'
     ];
 
     protected $casts = [
@@ -29,7 +45,17 @@ class Barang extends Model
         'harga_jual' => 'decimal:2',
         'reorder_point' => 'integer',
         'eoq_qty' => 'integer',
-        'lead_time' => 'integer'
+        'lead_time' => 'integer',
+        // ADD THESE:
+        'annual_demand' => 'decimal:2',
+        'ordering_cost' => 'decimal:2',
+        'holding_cost' => 'decimal:2',
+        'demand_avg_daily' => 'decimal:2',
+        'demand_max_daily' => 'decimal:2',
+        'eoq_calculated' => 'integer',
+        'rop_calculated' => 'integer', 
+        'safety_stock' => 'integer',
+        'last_eoq_calculation' => 'datetime'
     ];
 
     /**
@@ -202,5 +228,64 @@ class Barang extends Model
         return $query->whereNotNull('eoq_calculated')
                     ->whereNotNull('safety_stock')
                     ->whereNotNull('rop_calculated');
+    }
+
+    /**
+     * Relationship dengan KategoriBarang (Many-to-One)
+     */
+    public function kategori()
+    {
+        return $this->belongsTo(KategoriBarang::class, 'id_kategori', 'id_kategori');
+    }
+
+    /**
+     * Auto-generate kode internal when creating barang
+     */
+    protected static function boot()
+    {
+        parent::boot();
+        
+        static::creating(function ($barang) {
+            if ($barang->id_kategori && !$barang->kode_barang) {
+                $kategori = KategoriBarang::find($barang->id_kategori);
+                if ($kategori) {
+                    $barang->kode_barang = $kategori->generateKodeBarang();
+                    $barang->sequence_number = $kategori->getNextSequenceNumber();
+                }
+            }
+        });
+    }
+
+    /**
+     * Accessor untuk mendapatkan nama lengkap dengan merk
+     */
+    public function getNamaLengkapAttribute()
+    {
+        $nama = $this->nama_barang;
+        if ($this->merk) {
+            $nama = $this->merk . ' ' . $nama;
+        }
+        if ($this->model_tipe) {
+            $nama .= ' ' . $this->model_tipe;
+        }
+        return $nama;
+    }
+
+    /**
+     * Accessor untuk display badge kategori
+     */
+    public function getKategoriBadgeAttribute()
+    {
+        if (!$this->kategori) {
+            return [
+                'nama' => 'Uncategorized',
+                'kode' => 'UNC',
+                'icon' => '❓',
+                'warna' => '#6B7280',
+                'class' => 'px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-600'
+            ];
+        }
+        
+        return $this->kategori->display_badge;
     }
 }

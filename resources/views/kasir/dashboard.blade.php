@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }} - Kasir Dashboard</title>
+    <title>{{ config('app.name', 'Laravel') }} - Service Advisor Dashboard</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -28,7 +28,7 @@
                     </div>
                     <div class="ml-3">
                         <h3 class="text-white font-semibold">Bengkel Inventory</h3>
-                        <p class="text-purple-400 text-sm">Kasir Panel</p>
+                        <p class="text-purple-400 text-sm">Service Advisor Panel</p>
                     </div>
                 </div>
             </div>
@@ -37,7 +37,8 @@
             <nav class="mt-6">
                 <div class="px-3">
                     <!-- Dashboard -->
-                    <a href="#" class="flex items-center px-3 py-2 text-purple-300 hover:text-white hover:bg-purple-700 rounded-lg transition-colors duration-200 mb-1">
+                    <a href="{{ route('dashboard.kasir') }}" 
+                       class="flex items-center px-3 py-2 text-purple-300 hover:text-white hover:bg-purple-700 rounded-lg transition-colors duration-200 mb-1 {{ request()->routeIs('dashboard.kasir') ? 'bg-purple-700 text-white' : '' }}">
                         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h2a2 2 0 012 2v10H8V5z"></path>
@@ -46,27 +47,28 @@
                     </a>
 
                     <!-- Transaksi Service -->
-                    <a href="#" class="flex items-center px-3 py-2 text-purple-300 hover:text-white hover:bg-purple-700 rounded-lg transition-colors duration-200 mb-1">
+                    <a href="{{ route('kasir.transaksi-service') }}" 
+                       class="flex items-center px-3 py-2 text-purple-300 hover:text-white hover:bg-purple-700 rounded-lg transition-colors duration-200 mb-1 {{ request()->routeIs('kasir.transaksi-service') ? 'bg-purple-700 text-white' : '' }}">
                         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
                         </svg>
-                        Transaksi Service
+                        Service Request
                     </a>
 
                     <!-- Search Barang -->
-                    <a href="#" class="flex items-center px-3 py-2 text-purple-300 hover:text-white hover:bg-purple-700 rounded-lg transition-colors duration-200 mb-1">
+                    <a href="{{ route('kasir.search-barang') }}" class="flex items-center px-3 py-2 text-purple-300 hover:text-white hover:bg-purple-700 rounded-lg transition-colors duration-200 mb-1">
                         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
-                        Search Barang
+                        Katalog Barang
                     </a>
 
                     <!-- History Transaksi -->
-                    <a href="#" class="flex items-center px-3 py-2 text-purple-300 hover:text-white hover:bg-purple-700 rounded-lg transition-colors duration-200 mb-1">
+                    <a href="{{ route('kasir.history-transaksi') }}" class="flex items-center px-3 py-2 text-purple-300 hover:text-white hover:bg-purple-700 rounded-lg transition-colors duration-200 mb-1">
                         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
-                        History Transaksi
+                        Service History
                     </a>
                 </div>
             </nav>
@@ -80,7 +82,7 @@
                         </div>
                         <div class="ml-3">
                             <p class="text-white text-sm font-semibold">{{ Auth::user()->name }}</p>
-                            <p class="text-purple-400 text-xs">Kasir</p>
+                            <p class="text-purple-400 text-xs">Service Advisor</p>
                         </div>
                     </div>
                     <form method="POST" action="{{ route('logout') }}">
@@ -102,14 +104,15 @@
                 <div class="px-6 py-4">
                     <div class="flex items-center justify-between">
                         <div>
-                            <h1 class="text-2xl font-semibold text-gray-900">Dashboard Kasir</h1>
-                            <p class="text-gray-600 text-sm">Kelola transaksi service dan pelayanan customer</p>
+                            <h1 class="text-2xl font-semibold text-gray-900">Dashboard Service Advisor</h1>
+                            <p class="text-gray-600 text-sm">Manage service kendaraan dan kebutuhan sparepart</p>
                         </div>
                         <div class="flex items-center space-x-4">
                             <!-- Quick Actions -->
-                            <button class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors duration-200 text-sm font-medium">
+                            <a href="{{ route('kasir.transaksi-service') }}" 
+                               class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors duration-200 text-sm font-medium">
                                 + Transaksi Baru
-                            </button>
+                            </a>
                             
                             <!-- Date/Time -->
                             <div class="text-sm text-gray-600">
@@ -190,12 +193,13 @@
                         </div>
                         <div class="p-6">
                             <div class="flex gap-3">
-                                <button class="flex-1 p-3 border-2 border-dashed border-purple-300 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition-colors duration-200 text-center">
+                                <a href="{{ route('kasir.transaksi-service') }}" 
+                                   class="flex-1 p-3 border-2 border-dashed border-purple-300 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition-colors duration-200 text-center">
                                     <svg class="w-5 h-5 text-purple-600 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                                     </svg>
                                     <p class="text-xs font-medium text-purple-600">Transaksi Baru</p>
-                                </button>
+                                </a>
                                 
                                 <button class="flex-1 p-3 border-2 border-dashed border-gray-300 rounded-lg hover:border-gray-500 hover:bg-gray-50 transition-colors duration-200 text-center">
                                     <svg class="w-5 h-5 text-gray-600 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">

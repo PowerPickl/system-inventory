@@ -17,8 +17,15 @@ class RoleMiddleware
     
     public function handle(Request $request, Closure $next, $role): Response
     {
-        if (Auth::check() && Auth::user()->role->nama_role == $role) {
-            return $next($request);
+        if (Auth::check()) {
+            $userRole = Auth::user()->role->nama_role;
+            
+            // Support backward compatibility: Kasir = Service Advisor
+            if (($role === 'Kasir' && $userRole === 'Service Advisor') || 
+                ($role === 'Service Advisor' && $userRole === 'Service Advisor') ||
+                ($userRole === $role)) {
+                return $next($request);
+            }
         }
 
         return redirect('/unauthorized');

@@ -37,29 +37,111 @@ class RestockRequestController extends Controller
      */
     public function show($id)
     {
-        $request = RestockRequest::with([
-            'userGudang', 
-            'userApproved', 
-            'details.barang.stok',
-            'barangMasuk.details'
-        ])
-        ->where('id_user_gudang', Auth::id())
-        ->findOrFail($id);
+        try {
+            $request = RestockRequest::with([
+                'userGudang',
+                'userApproved',
+                'userOrdered',
+                'userTerminated',
+                'details.barang.stok'
+            ])->findOrFail($id);
 
-        // Calculate totals
-        $totals = [
-            'total_items' => $request->details->count(),
-            'total_qty_requested' => $request->details->sum('qty_request'),
-            'total_qty_approved' => $request->details->sum('qty_approved'),
-            'total_estimated_cost' => $request->details->sum('estimasi_harga'),
-            'items_received' => $request->barangMasuk->sum(function($barangMasuk) {
-                return $barangMasuk->details->count();
-            })
+            // Check if user owns this request (security)
+            if ($request->id_user_gudang !== Auth::id()) {
+                abort(403, 'Unauthorized access to this request.');
+            }
+
+            // Calculate additional stats
+            $stats = [
+                'total_items' => $request->details->count(),
+                'total_cost' => $request->details->sum('estimasi_harga'),
+                'approved_items' => $request->details->where('qty_approved', '>', 0)->count(),
+                'additional_items' => $request->details->where('alasan_request', 'Additional item added by Owner during approval')->count(),
+                'original_items' => $request->details->where('alasan_request', '!=', 'Additional item added by Owner during approval')->count()
+            ];
+
+            // Get workflow status
+            $workflow = $this->getWorkflowStatus($request);
+
+            return view('gudang.restock-request-detail', compact('request', 'stats', 'workflow'));
+
+        } catch (\Exception $e) {
+            return redirect()->route('gudang.restock-requests')
+                            ->with('error', 'Request not found or access denied.');
+        }
+    }
+    
+    private function getWorkflowStatus($request)
+    {
+        $steps = [
+            [
+                'name' => 'Request Created',
+                'status' => 'completed',
+                'date' => $request->tanggal_request,
+                'user' => $request->userGudang->name,
+                'icon' => '📋'
+            ],
+            [
+                'name' => 'Pending Approval',
+                'status' => $request->status_request === 'Pending' ? 'current' : 'completed',
+                'date' => null,
+                'user' => null,
+                'icon' => '⏳'
+            ]
         ];
 
-        return view('gudang.restock-request-detail', compact('request', 'totals'));
-    }
+        if (in_array($request->status_request, ['Approved', 'Ordered', 'Completed'])) {
+            $steps[] = [
+                'name' => 'Approved by Owner',
+                'status' => 'completed',
+                'date' => $request->tanggal_approved,
+                'user' => $request->userApproved ? $request->userApproved->name : 'Owner',
+                'icon' => '✅'
+            ];
+        }
 
+        if (in_array($request->status_request, ['Ordered', 'Completed'])) {
+            $steps[] = [
+                'name' => 'Ordered',
+                'status' => 'completed',
+                'date' => $request->tanggal_ordered,
+                'user' => $request->userOrdered ? $request->userOrdered->name : 'Owner',
+                'icon' => '📦'
+            ];
+        }
+
+        if ($request->status_request === 'Completed') {
+            $steps[] = [
+                'name' => 'Completed',
+                'status' => 'completed',
+                'date' => $request->updated_at, // You might want to add a specific completion date field
+                'user' => 'Warehouse Team',
+                'icon' => '🎉'
+            ];
+        }
+
+        if ($request->status_request === 'Rejected') {
+            $steps[] = [
+                'name' => 'Rejected',
+                'status' => 'rejected',
+                'date' => $request->tanggal_approved,
+                'user' => $request->userApproved ? $request->userApproved->name : 'Owner',
+                'icon' => '❌'
+            ];
+        }
+
+        if ($request->status_request === 'Terminated') {
+            $steps[] = [
+                'name' => 'Force Terminated',
+                'status' => 'terminated',
+                'date' => $request->tanggal_terminated,
+                'user' => $request->userTerminated ? $request->userTerminated->name : 'Owner',
+                'icon' => '🛑'
+            ];
+        }
+
+        return $steps;
+    }
     /**
      * Cancel pending request
      */
