@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('roles', function (Blueprint $table) {
-            $table->id(); // UNSIGNED BIGNIT
-            $table->string('nama_role');
+        Schema::create('stok', function (Blueprint $table) {
+            $table->bigIncrements('id_stok');
+            $table->unsignedBigInteger('id_barang')->index();
+            $table->integer('jumlah_stok')->default(0);
+            $table->enum('status_stok', ['Aman', 'Perlu Restock', 'Habis'])->default('Aman');
             $table->timestamps();
         });
     }
@@ -23,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('roles');
+        Schema::dropIfExists('stok');
     }
 };

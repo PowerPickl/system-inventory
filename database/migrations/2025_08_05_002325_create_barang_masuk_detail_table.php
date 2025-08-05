@@ -12,22 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('barang_masuk_detail', function (Blueprint $table) {
-            $table->id('id_masuk_detail');
+            $table->bigIncrements('id_masuk_detail');
             $table->unsignedBigInteger('id_masuk');
-            $table->unsignedBigInteger('id_barang');
+            $table->unsignedBigInteger('id_barang')->index('barang_masuk_detail_id_barang_foreign');
             $table->integer('qty_masuk');
-            $table->decimal('harga_beli_satuan', 10, 2);
-            $table->decimal('subtotal', 12, 2);
+            $table->decimal('harga_beli_satuan', 10);
+            $table->decimal('subtotal', 12);
             $table->date('tanggal_expired')->nullable();
             $table->string('batch_number')->nullable();
             $table->text('keterangan_detail')->nullable();
             $table->timestamps();
 
-            // Foreign key constraints
-            $table->foreign('id_masuk')->references('id_masuk')->on('barang_masuk')->onDelete('cascade');
-            $table->foreign('id_barang')->references('id_barang')->on('barang')->onDelete('cascade');
-            
-            // Indexes
             $table->index(['id_masuk', 'id_barang']);
         });
     }

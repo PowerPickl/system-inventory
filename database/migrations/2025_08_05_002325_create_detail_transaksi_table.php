@@ -12,20 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('detail_transaksi', function (Blueprint $table) {
-            $table->id('id_detail');
+            $table->bigIncrements('id_detail');
             $table->unsignedBigInteger('id_transaksi');
-            $table->unsignedBigInteger('id_barang');
+            $table->unsignedBigInteger('id_barang')->index('detail_transaksi_id_barang_foreign');
             $table->integer('qty');
-            $table->decimal('harga_satuan', 10, 2);
-            $table->decimal('subtotal', 12, 2);
-            $table->enum('status_permintaan', ['Pending', 'Approved', 'Rejected'])->default('Pending');
+            $table->decimal('harga_satuan', 10);
+            $table->decimal('subtotal', 12);
+            $table->enum('status_permintaan', ['Pending', 'Approved', 'Rejected', 'Cancelled'])->default('Pending');
+            $table->text('keterangan')->nullable();
             $table->timestamps();
 
-            // Foreign key constraints
-            $table->foreign('id_transaksi')->references('id_transaksi')->on('transaksi')->onDelete('cascade');
-            $table->foreign('id_barang')->references('id_barang')->on('barang')->onDelete('cascade');
-            
-            // Indexes for better performance
             $table->index(['id_transaksi', 'id_barang']);
         });
     }

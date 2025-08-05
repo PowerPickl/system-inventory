@@ -12,20 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('restock_request_detail', function (Blueprint $table) {
-            $table->id('id_request_detail');
+            $table->bigIncrements('id_request_detail');
             $table->unsignedBigInteger('id_request');
-            $table->unsignedBigInteger('id_barang');
-            $table->integer('qty_request'); // jumlah yang diminta gudang
-            $table->integer('qty_approved')->nullable(); // jumlah yang disetujui owner
-            $table->decimal('estimasi_harga', 12, 2)->nullable(); // estimasi cost
+            $table->unsignedBigInteger('id_barang')->index('restock_request_detail_id_barang_foreign');
+            $table->integer('qty_request');
+            $table->integer('qty_approved')->nullable();
+            $table->decimal('estimasi_harga', 12)->nullable();
             $table->text('alasan_request')->nullable();
             $table->timestamps();
 
-            // Foreign key constraints
-            $table->foreign('id_request')->references('id_request')->on('restock_request')->onDelete('cascade');
-            $table->foreign('id_barang')->references('id_barang')->on('barang')->onDelete('cascade');
-            
-            // Indexes
             $table->index(['id_request', 'id_barang']);
         });
     }

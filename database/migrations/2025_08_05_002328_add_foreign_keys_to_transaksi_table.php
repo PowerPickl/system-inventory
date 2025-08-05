@@ -6,19 +6,23 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
         Schema::table('transaksi', function (Blueprint $table) {
-            // Ubah enum jadi string biar bisa nerima semua jenis service
-            $table->string('jenis_transaksi', 100)->change();
+            $table->foreign(['id_user'])->references(['id'])->on('users')->onUpdate('restrict')->onDelete('cascade');
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::table('transaksi', function (Blueprint $table) {
-            // Rollback ke enum kalau perlu
-            $table->enum('jenis_transaksi', ['Service', 'Penjualan Sparepart'])->default('Service')->change();
+            $table->dropForeign('transaksi_id_user_foreign');
         });
     }
 };
