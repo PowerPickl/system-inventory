@@ -37,7 +37,7 @@
             <nav class="mt-6 pb-20">
                 <div class="px-3">
                     <!-- Dashboard -->
-                    <a href="{{ route('dashboard') }}" class="flex items-center px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-700 rounded-lg transition-colors duration-200 mb-1">
+                    <a href="{{ route('owner.dashboard') }}" class="flex items-center px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-700 rounded-lg transition-colors duration-200 mb-1">
                         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h2a2 2 0 012 2v10H8V5z"></path>
@@ -46,24 +46,29 @@
                     </a>
 
                     <!-- Kelola Data User -->
-                    <a href="#" class="flex items-center px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-700 rounded-lg transition-colors duration-200 mb-1">
+                    <a href="{{ route('owner.kelola-user.index') }}" class="flex items-center px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-700 rounded-lg transition-colors duration-200 mb-1">
                         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m9 5.197v1M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
                         </svg>
                         Kelola Data User
                     </a>
 
-                    <!-- Restock Approval -->
-                    <a href="#" class="flex items-center px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-700 rounded-lg transition-colors duration-200 mb-1">
+                    <!-- Restock Approval - FIXED WITH REAL DATA -->
+                    <a href="{{ route('owner.restock-approval.index') }}" class="flex items-center px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-700 rounded-lg transition-colors duration-200 mb-1">
                         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
                         Restock Approval
-                        <span class="ml-auto bg-red-500 text-white text-xs px-2 py-1 rounded-full">3</span>
+                        @php
+                            $pendingCount = \App\Models\RestockRequest::where('status_request', 'Pending')->count();
+                        @endphp
+                        @if($pendingCount > 0)
+                            <span class="ml-auto bg-red-500 text-white text-xs px-2 py-1 rounded-full">{{ $pendingCount }}</span>
+                        @endif
                     </a>
 
                     <!-- Laporan -->
-                    <a href="#" class="flex items-center px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-700 rounded-lg transition-colors duration-200 mb-1">
+                    <a href="{{ route('owner.simple-reports.index') }}" class="flex items-center px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-700 rounded-lg transition-colors duration-200 mb-1">
                         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                         </svg>
@@ -112,7 +117,9 @@
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5-5-5h5v-12h5v12z"></path>
                                 </svg>
-                                <span class="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full"></span>
+                                @if($pendingCount > 0)
+                                    <span class="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full"></span>
+                                @endif
                             </button>
                             
                             <!-- Date/Time -->
@@ -137,7 +144,7 @@
                                 </svg>
                             </div>
                             <div class="ml-4">
-                                <h3 class="text-lg font-semibold text-gray-900">5</h3>
+                                <h3 class="text-lg font-semibold text-gray-900">{{ \App\Models\User::count() }}</h3>
                                 <p class="text-gray-600 text-sm">Total Users</p>
                             </div>
                         </div>
@@ -151,7 +158,7 @@
                                 </svg>
                             </div>
                             <div class="ml-4">
-                                <h3 class="text-lg font-semibold text-gray-900">150</h3>
+                                <h3 class="text-lg font-semibold text-gray-900">{{ \App\Models\Barang::count() }}</h3>
                                 <p class="text-gray-600 text-sm">Total Items</p>
                             </div>
                         </div>
@@ -165,7 +172,13 @@
                                 </svg>
                             </div>
                             <div class="ml-4">
-                                <h3 class="text-lg font-semibold text-gray-900">12</h3>
+                                @php
+                                    // Low stock based on ROP (Reorder Point)
+                                    $lowStockCount = \App\Models\Barang::whereHas('stok', function($q) {
+                                        $q->whereRaw('jumlah_stok <= barang.reorder_point');
+                                    })->count();
+                                @endphp
+                                <h3 class="text-lg font-semibold text-gray-900">{{ $lowStockCount }}</h3>
                                 <p class="text-gray-600 text-sm">Low Stock Items</p>
                             </div>
                         </div>
@@ -179,7 +192,7 @@
                                 </svg>
                             </div>
                             <div class="ml-4">
-                                <h3 class="text-lg font-semibold text-gray-900">3</h3>
+                                <h3 class="text-lg font-semibold text-gray-900">{{ $pendingCount }}</h3>
                                 <p class="text-gray-600 text-sm">Pending Requests</p>
                             </div>
                         </div>
@@ -192,22 +205,50 @@
                         <h3 class="text-lg font-semibold text-gray-900">Recent Activity</h3>
                     </div>
                     <div class="p-6">
-                        <div class="space-y-4">
-                            <div class="flex items-center p-4 bg-blue-50 rounded-lg">
-                                <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
-                                <div class="ml-4">
-                                    <p class="text-gray-900 font-medium">Restock request submitted</p>
-                                    <p class="text-gray-600 text-sm">Gudang requested restock for 5 items - 2 hours ago</p>
+                        @php
+                            $recentRequests = \App\Models\RestockRequest::with('userGudang')
+                                ->orderBy('tanggal_request', 'desc')
+                                ->take(3)
+                                ->get();
+                        @endphp
+                        
+                        @if($recentRequests->count() > 0)
+                            <div class="space-y-4">
+                                @foreach($recentRequests as $request)
+                                    <div class="flex items-center p-4 {{ $request->status_request == 'Pending' ? 'bg-red-50' : ($request->status_request == 'Approved' ? 'bg-green-50' : 'bg-blue-50') }} rounded-lg">
+                                        <div class="w-2 h-2 {{ $request->status_request == 'Pending' ? 'bg-red-500' : ($request->status_request == 'Approved' ? 'bg-green-500' : 'bg-blue-500') }} rounded-full"></div>
+                                        <div class="ml-4">
+                                            <p class="text-gray-900 font-medium">
+                                                Restock request {{ $request->nomor_request }} 
+                                                @if($request->status_request == 'Pending')
+                                                    <span class="text-red-600">needs approval</span>
+                                                @elseif($request->status_request == 'Approved')
+                                                    <span class="text-green-600">approved</span>
+                                                @else
+                                                    <span class="text-blue-600">{{ strtolower($request->status_request) }}</span>
+                                                @endif
+                                            </p>
+                                            <p class="text-gray-600 text-sm">
+                                                By {{ $request->userGudang->name }} - {{ $request->tanggal_request->diffForHumans() }}
+                                                @if($request->status_request == 'Pending')
+                                                    <a href="{{ route('owner.restock-approval.index') }}" class="text-red-600 hover:text-red-700 font-medium ml-2">Review →</a>
+                                                @endif
+                                            </p>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @else
+                            <div class="space-y-4">
+                                <div class="flex items-center p-4 bg-gray-50 rounded-lg">
+                                    <div class="w-2 h-2 bg-gray-400 rounded-full"></div>
+                                    <div class="ml-4">
+                                        <p class="text-gray-900 font-medium">No recent restock requests</p>
+                                        <p class="text-gray-600 text-sm">All requests have been processed</p>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="flex items-center p-4 bg-green-50 rounded-lg">
-                                <div class="w-2 h-2 bg-green-500 rounded-full"></div>
-                                <div class="ml-4">
-                                    <p class="text-gray-900 font-medium">Transaction completed</p>
-                                    <p class="text-gray-600 text-sm">Service transaction #TRX001 completed - 4 hours ago</p>
-                                </div>
-                            </div>
-                        </div>
+                        @endif
                     </div>
                 </div>
             </main>

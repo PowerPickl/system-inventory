@@ -123,11 +123,19 @@ class User extends Authenticatable
     }
 
     /**
+     * Check if user is Service Advisor (new)
+     */
+    public function isServiceAdvisor()
+    {
+        return $this->hasRole('Service Advisor');
+    }
+    
+    /**
      * Check if user is Kasir
      */
     public function isKasir()
     {
-        return $this->hasRole('Kasir');
+        return $this->hasRole('Service Advisor') || $this->hasRole('Kasir');
     }
 
     /**
@@ -172,3 +180,4 @@ class User extends Authenticatable
         return $initials ?: strtoupper(substr($this->name, 0, 2));
     }
 }
+
